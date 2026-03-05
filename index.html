@@ -161,6 +161,25 @@
     .network.online { color: #9ef1d3; border-color: #2d7d70; background: linear-gradient(135deg, #15453f 0%, #145046 100%); }
     .network.offline { color: #ffc3ab; border-color: #874f3f; background: linear-gradient(135deg, #4b2a24 0%, #5a3329 100%); }
 
+    .head-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .school-logo-head {
+      width: clamp(46px, 8vw, 60px);
+      height: auto;
+      object-fit: contain;
+      display: block;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid color-mix(in srgb, #ffffff 40%, var(--line));
+      border-radius: 10px;
+      padding: 3px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, .25);
+    }
+
     main { padding: 14px 0 20px; }
 
     .surface {
@@ -345,6 +364,45 @@
       margin-top: 8px;
     }
 
+    .manual-wrap {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid color-mix(in srgb, var(--brand) 30%, var(--line));
+      background: linear-gradient(145deg, #112f4f 0%, #0f2640 100%);
+    }
+
+    .manual-head {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .manual-form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .manual-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .manual-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .manual-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
     .btn-ghost {
       min-height: 44px;
       border: 1px solid var(--line);
@@ -498,6 +556,7 @@
       .filters .field:last-child { width: 140px; }
       .meta-row { padding-top: 6px; }
       .action-row { justify-content: flex-end; }
+      .manual-grid { grid-template-columns: 1fr 1fr; }
       .chart-scroll { overflow: visible; display: grid; grid-template-columns: 1fr 1fr; }
       .chart-card { min-width: 0; }
       .bottom-nav { display: none; }
@@ -535,9 +594,12 @@
         </div>
         <p class="head-meta" id="masaKini">Memuatkan tarikh & masa...</p>
       </div>
-      <div id="statusNetwork" class="network online" role="status" aria-live="polite">
-        <span class="material-symbols-outlined">wifi</span>
-        <span>Online</span>
+      <div class="head-right">
+        <div id="statusNetwork" class="network online" role="status" aria-live="polite">
+          <span class="material-symbols-outlined">wifi</span>
+          <span>Online</span>
+        </div>
+        <img src="logo-sekolah.jpg" alt="Logo Sekolah" class="school-logo-head">
       </div>
     </div>
   </header>
@@ -590,10 +652,51 @@
       <div class="meta-row">
         <div id="metaData">Menunggu data...</div>
         <div class="action-row">
+          <button id="btnToggleManual" class="btn-ghost" type="button">Input Manual</button>
           <button id="btnPdf" class="btn-ghost" type="button">Muat Turun PDF</button>
           <button id="btnPrint" class="btn-ghost" type="button">Cetak</button>
         </div>
       </div>
+    </section>
+
+    <section id="manualSection" class="surface manual-wrap hidden" aria-label="Input manual kehadiran">
+      <h3 class="manual-head">Input Kehadiran Manual (Guru)</h3>
+      <form id="manualForm" class="manual-form">
+        <div class="manual-grid">
+          <div class="field">
+            <label for="manualPassword">Kata Laluan Guru</label>
+            <input id="manualPassword" class="input" type="password" placeholder="Masukkan kata laluan">
+          </div>
+          <div class="field">
+            <label for="manualTarikh">Tarikh</label>
+            <input id="manualTarikh" class="input" type="date">
+          </div>
+          <div class="field">
+            <label for="manualNama">Nama Murid</label>
+            <select id="manualNama" class="select" required>
+              <option value="">Pilih murid</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="manualKelas">Kelas</label>
+            <select id="manualKelas" class="select" required>
+              <option value="">Pilih kelas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="manualStatus">Status</label>
+            <select id="manualStatus" class="select">
+              <option value="Hadir">Hadir</option>
+              <option value="Tidak Hadir">Tidak Hadir</option>
+            </select>
+          </div>
+        </div>
+        <p class="manual-note">Gunakan fungsi ini hanya untuk murid yang terlupa bawa kad.</p>
+        <div class="manual-actions">
+          <button id="btnSubmitManual" class="btn" type="submit">Simpan Kehadiran Manual</button>
+          <button id="btnCancelManual" class="btn-ghost" type="button">Tutup</button>
+        </div>
+      </form>
     </section>
 
     <section class="chart-scroll" aria-label="Statistik Kehadiran">
@@ -637,7 +740,8 @@
   </nav>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuJ-FqTY8NWAdYvgsG0_ORBHVs-PQKqUfgqS0Cwg9Ma6ssBUVp8sA07fqRDx-OlULv/exec";
+    const SCRIPT_URL = "https://script.google.com/a/macros/moe-dl.edu.my/s/AKfycbwNZgBGEnwwjUlpQRWhVQU-HQ5tC_r0dqirAiqi-piLq3WdXfWqJAyxdj3iN6-bMT9-/exec";
+    const GURU_PASSWORD = 'myHadir1234';
     const CACHE_KEY = 'myhadir_cache_v2';
 
     let dataPenuh = [];
@@ -682,7 +786,16 @@
       tableBody: document.getElementById('tableBody'),
       toastWrap: document.getElementById('toastWrap'),
       btnPdf: document.getElementById('btnPdf'),
-      btnPrint: document.getElementById('btnPrint')
+      btnPrint: document.getElementById('btnPrint'),
+      btnToggleManual: document.getElementById('btnToggleManual'),
+      manualSection: document.getElementById('manualSection'),
+      manualForm: document.getElementById('manualForm'),
+      manualPassword: document.getElementById('manualPassword'),
+      manualTarikh: document.getElementById('manualTarikh'),
+      manualNama: document.getElementById('manualNama'),
+      manualKelas: document.getElementById('manualKelas'),
+      manualStatus: document.getElementById('manualStatus'),
+      btnCancelManual: document.getElementById('btnCancelManual')
     };
 
     function pad2(n) { return String(n).padStart(2, '0'); }
@@ -694,6 +807,85 @@
     function formatTarikhApi(isoDate) {
       const m = String(isoDate || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
       return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+    }
+
+    function bukaInputManual() {
+      el.manualSection.classList.remove('hidden');
+      el.manualTarikh.value = el.filterTarikh.value || hariIniIso();
+      el.manualPassword.value = '';
+      isiPilihanKelasManual(el.filterKelas.value || '');
+      el.manualNama.value = '';
+      el.manualStatus.value = 'Hadir';
+      el.manualPassword.focus();
+    }
+
+    function tutupInputManual() {
+      el.manualSection.classList.add('hidden');
+      el.manualForm.reset();
+    }
+
+    async function simpanManual(ev) {
+      ev.preventDefault();
+      const password = el.manualPassword.value.trim();
+      if (password !== GURU_PASSWORD) {
+        toast('Kata laluan guru tidak sah.', 'warn');
+        el.manualPassword.focus();
+        return;
+      }
+
+      const nama = el.manualNama.value.trim();
+      const kelas = el.manualKelas.value.trim();
+      const status = el.manualStatus.value;
+      const tarikhIso = el.manualTarikh.value || el.filterTarikh.value || hariIniIso();
+      const tarikhApi = formatTarikhApi(tarikhIso);
+
+      if (!nama || !kelas || !tarikhApi) {
+        toast('Sila lengkapkan maklumat murid.', 'warn');
+        return;
+      }
+
+      const masaKini = new Date().toLocaleTimeString('ms-MY', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      });
+
+      const rowBaru = {
+        Nama: nama,
+        Kelas: kelas,
+        Status: status,
+        Tarikh: tarikhApi,
+        Masa: masaKini,
+        Sumber: 'Manual Guru'
+      };
+
+      dataPenuh.unshift(rowBaru);
+      isiPilihanKelas();
+      renderSemua();
+      simpanCache(dataPenuh);
+
+      const payload = {
+        action: 'manual',
+        sumber: 'manual_guru',
+        tarikh: tarikhApi,
+        nama,
+        kelas,
+        status,
+        masa: masaKini
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          redirect: 'follow'
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        toast('Kehadiran manual berjaya disimpan.', 'ok');
+      } catch (_) {
+        toast('Rekod lokal disimpan. Semak Apps Script jika perlu.', 'warn');
+      }
+
+      tutupInputManual();
     }
 
     function formatMasaKini() {
@@ -744,8 +936,21 @@
       return 'Hadir';
     }
 
+    function adaImbasanKad(rows) {
+      return rows.some(item => {
+        const s = String(item.Status || item.status || '').toLowerCase().trim();
+        if (!s) return false;
+        if (s.includes('tidak') || s.includes('absen') || s.includes('ponteng') || s.includes('x hadir')) return false;
+        return s.includes('hadir') || s.includes('present') || s === 'h';
+      });
+    }
+
     function bacaKelas(item) {
       return String(item.Kelas || item.kelas || item.Nama_Kelas || item['Nama Kelas'] || 'Tiada Kelas').trim();
+    }
+
+    function bacaNama(item) {
+      return String(item.Nama || item.nama || item['Nama Murid'] || '').trim();
     }
 
     function bacaTarikh(item) {
@@ -786,9 +991,45 @@
         el.filterKelas.appendChild(o);
       });
       if (list.includes(current)) el.filterKelas.value = current;
+      isiPilihanKelasManual(el.manualKelas.value);
     }
 
-    function rowsDitapis() {
+    function isiPilihanKelasManual(pilihan = '') {
+      const list = Array.from(new Set(dataPenuh.map(bacaKelas))).sort((a,b) => a.localeCompare(b));
+      el.manualKelas.innerHTML = '<option value="">Pilih kelas</option>';
+      list.forEach(k => {
+        const o = document.createElement('option');
+        o.value = k;
+        o.textContent = k;
+        el.manualKelas.appendChild(o);
+      });
+      if (pilihan && list.includes(pilihan)) el.manualKelas.value = pilihan;
+      isiPilihanMuridManual();
+    }
+
+    function isiPilihanMuridManual() {
+      const kelasDipilih = el.manualKelas.value;
+      const listNama = Array.from(
+        new Set(
+          dataPenuh
+            .filter(item => !kelasDipilih || bacaKelas(item) === kelasDipilih)
+            .map(bacaNama)
+            .filter(Boolean)
+        )
+      ).sort((a, b) => a.localeCompare(b, 'ms'));
+
+      const current = el.manualNama.value;
+      el.manualNama.innerHTML = '<option value="">Pilih murid</option>';
+      listNama.forEach(n => {
+        const o = document.createElement('option');
+        o.value = n;
+        o.textContent = n;
+        el.manualNama.appendChild(o);
+      });
+      if (current && listNama.includes(current)) el.manualNama.value = current;
+    }
+
+    function rowsDitapisAsas() {
       const q = el.cariNama.value.trim().toLowerCase();
       const kelas = el.filterKelas.value;
       const tarikhApi = formatTarikhApi(el.filterTarikh.value);
@@ -803,6 +1044,12 @@
         const okTarikh = tarikhItem ? tarikhItem === tarikhApi : true;
         return okNama && okKelas && okTarikh;
       });
+    }
+
+    function rowsDitapis() {
+      const rows = rowsDitapisAsas();
+      if (rows.length && !adaImbasanKad(rows)) return [];
+      return rows;
     }
 
     function sortRows(rows) {
@@ -836,7 +1083,11 @@
       el.rowCount.textContent = `${sorted.length} rekod`;
 
       if (!sorted.length) {
-        el.tableBody.innerHTML = '<tr><td colspan="3" class="empty">Tiada data untuk penapis semasa.</td></tr>';
+        const rowsAsas = rowsDitapisAsas();
+        const mesej = (rowsAsas.length && !adaImbasanKad(rowsAsas))
+          ? 'Tiada imbasan'
+          : 'Tiada data untuk penapis semasa.';
+        el.tableBody.innerHTML = `<tr><td colspan="3" class="empty">${mesej}</td></tr>`;
         return;
       }
 
@@ -1110,6 +1361,10 @@
       });
       el.btnPdf.addEventListener('click', muatTurunPdf);
       el.btnPrint.addEventListener('click', () => window.print());
+      el.btnToggleManual.addEventListener('click', bukaInputManual);
+      el.btnCancelManual.addEventListener('click', tutupInputManual);
+      el.manualForm.addEventListener('submit', simpanManual);
+      el.manualKelas.addEventListener('change', isiPilihanMuridManual);
 
       initSorting();
       ambilData();
